@@ -1,0 +1,165 @@
+{%- comment -%}
+  Produkt-Akkordeons für Leuchten:
+    1. Technische Details
+    2. Leuchtmittel & Montage
+    3. Versand & Bruchsicherheit   (Inhalt aus Seite „versand-bruchsicherheit“, sonst Standardtext)
+    4. Produktsicherheit & Hersteller (GPSR)
+
+  Verwendung: {% render 'lamp-accordions', product: product %}
+  Optional:   variant, close_first: true (erstes Akkordeon geschlossen)
+{%- endcomment -%}
+{%- liquid
+  assign v = variant | default: product.selected_or_first_available_variant
+  assign vm = v.metafields.lamp
+  assign pm = product.metafields.lamp
+  assign vc = v.metafields.compliance
+  assign pc = product.metafields.compliance
+
+  assign kelvin = vm.color_temperature_k.value | default: pm.color_temperature_k.value
+  assign light_color = vm.light_color.value | default: pm.light_color.value
+  assign lumen = vm.luminous_flux_lm.value | default: pm.luminous_flux_lm.value
+  assign watt = vm.power_w.value | default: pm.power_w.value
+  assign cri = vm.cri_ra.value | default: pm.cri_ra.value
+  assign dim_mf = vm.dimmable | default: pm.dimmable
+  assign dim_type = vm.dimming_type.value | default: pm.dimming_type.value
+  assign ip = vm.ip_rating.value | default: pm.ip_rating.value
+  assign protection = vm.protection_class.value | default: pm.protection_class.value
+  assign smart = vm.smart_protocol.value | default: pm.smart_protocol.value
+  assign material = vm.material.value | default: pm.material.value
+
+  assign socket = vm.socket.value | default: pm.socket.value
+  assign lights = pm.number_of_lights.value
+  assign max_w = pm.max_wattage_w.value
+  assign bulb_incl_mf = vm.bulb_included | default: pm.bulb_included
+  assign bulb_repl_mf = vm.bulb_replaceable | default: pm.bulb_replaceable
+  assign mounting = pm.mounting.value
+  assign cable = pm.cable_length_cm.value
+
+  assign energy_class = vc.energy_class.value | default: pc.energy_class.value
+  assign eprel_id = vc.eprel_id.value | default: pc.eprel_id.value
+  assign fiche_url = vc.product_fiche.value | default: pc.product_fiche.value
+  if fiche_url == blank and eprel_id != blank
+    assign fiche_url = 'https://eprel.ec.europa.eu/qr/' | append: eprel_id
+  endif
+  assign manual_mf = pc.manual
+  assign manual_url = blank
+  if manual_mf != blank
+    if manual_mf.type == 'url'
+      assign manual_url = manual_mf.value
+    else
+      assign manual_url = manual_mf.value.url
+    endif
+  endif
+
+  assign gpsr_manufacturer = pc.gpsr_manufacturer
+  assign gpsr_responsible = pc.gpsr_responsible_person
+  assign safety_notes = pc.safety_notes
+
+  assign shipping_page = pages['versand-bruchsicherheit']
+-%}
+
+<div class="lx-acc" data-lamp-swap="accordions-{{ product.id }}">
+
+  {%- comment -%} 1. Technische Details {%- endcomment -%}
+  <details class="lx-acc__item" data-acc="tech"{% unless close_first %} open{% endunless %}>
+    <summary class="lx-acc__summary">Technische Details</summary>
+    <div class="lx-acc__body">
+      <table class="lx-acc__table">
+        <tbody>
+          {%- if light_color != blank -%}<tr><th scope="row">Lichtfarbe</th><td>{{ light_color }}</td></tr>{%- endif -%}
+          {%- if kelvin != blank -%}<tr><th scope="row">Farbtemperatur</th><td>{{ kelvin }} K</td></tr>{%- endif -%}
+          {%- if lumen != blank -%}<tr><th scope="row">Lichtstrom</th><td>{{ lumen }} lm</td></tr>{%- endif -%}
+          {%- if watt != blank -%}<tr><th scope="row">Leistungsaufnahme</th><td>{{ watt }} W</td></tr>{%- endif -%}
+          {%- if cri != blank -%}<tr><th scope="row">Farbwiedergabeindex</th><td>Ra {{ cri }}</td></tr>{%- endif -%}
+          {%- if dim_mf != blank -%}
+            <tr><th scope="row">Dimmbar</th><td>{% if dim_mf.value %}Ja{% if dim_type != blank %} ({{ dim_type | join: ', ' }}){% endif %}{% else %}Nein{% endif %}</td></tr>
+          {%- endif -%}
+          {%- if smart != blank -%}<tr><th scope="row">Smart Home</th><td>{{ smart | join: ', ' }}</td></tr>{%- endif -%}
+          {%- if ip != blank -%}<tr><th scope="row">Schutzart</th><td>{{ ip }}</td></tr>{%- endif -%}
+          {%- if protection != blank -%}<tr><th scope="row">Schutzklasse</th><td>{{ protection }}</td></tr>{%- endif -%}
+          {%- if material != blank -%}<tr><th scope="row">Material</th><td>{{ material | join: ', ' }}</td></tr>{%- endif -%}
+          {%- if energy_class != blank -%}<tr><th scope="row">Energieeffizienzklasse</th><td>{{ energy_class | upcase }} (Skala A–G)</td></tr>{%- endif -%}
+          {%- if eprel_id != blank -%}<tr><th scope="row">EPREL-Nr.</th><td>{{ eprel_id }}</td></tr>{%- endif -%}
+          {%- if v.weight > 0 -%}<tr><th scope="row">Gewicht</th><td>{{ v.weight | weight_with_unit }}</td></tr>{%- endif -%}
+          {%- if v.sku != blank -%}<tr><th scope="row">Artikelnummer</th><td>{{ v.sku }}</td></tr>{%- endif -%}
+          {%- if v.barcode != blank -%}<tr><th scope="row">EAN</th><td>{{ v.barcode }}</td></tr>{%- endif -%}
+        </tbody>
+      </table>
+      {%- if fiche_url != blank -%}
+        <ul class="lx-acc__links" role="list">
+          <li><a href="{{ fiche_url }}" target="_blank" rel="noopener">Produktdatenblatt (EPREL)</a></li>
+        </ul>
+      {%- endif -%}
+    </div>
+  </details>
+
+  {%- comment -%} 2. Leuchtmittel & Montage {%- endcomment -%}
+  <details class="lx-acc__item" data-acc="mount">
+    <summary class="lx-acc__summary">Leuchtmittel &amp; Montage</summary>
+    <div class="lx-acc__body">
+      <table class="lx-acc__table">
+        <tbody>
+          {%- if socket != blank -%}<tr><th scope="row">Fassung / Sockel</th><td>{{ socket }}</td></tr>{%- endif -%}
+          {%- if lights != blank -%}<tr><th scope="row">Anzahl Flammen</th><td>{{ lights }}</td></tr>{%- endif -%}
+          {%- if max_w != blank -%}<tr><th scope="row">Max. Leistung je Fassung</th><td>{{ max_w }} W</td></tr>{%- endif -%}
+          {%- if bulb_incl_mf != blank -%}<tr><th scope="row">Leuchtmittel im Lieferumfang</th><td>{% if bulb_incl_mf.value %}Ja{% else %}Nein{% endif %}</td></tr>{%- endif -%}
+          {%- if bulb_repl_mf != blank -%}<tr><th scope="row">Leuchtmittel austauschbar</th><td>{% if bulb_repl_mf.value %}Ja{% else %}Nein, fest verbautes LED-Modul{% endif %}</td></tr>{%- endif -%}
+          {%- if mounting != blank -%}<tr><th scope="row">Montageart</th><td>{{ mounting | join: ', ' }}</td></tr>{%- endif -%}
+          {%- if cable != blank -%}<tr><th scope="row">Kabel / Abhängung</th><td>{{ cable }} cm (kürzbar)</td></tr>{%- endif -%}
+        </tbody>
+      </table>
+      {%- if bulb_incl_mf != blank and bulb_incl_mf.value == false and socket != blank -%}
+        <p>Passende Leuchtmittel mit Fassung <strong>{{ socket }}</strong> findest du in unserer <a href="{{ collections['leuchtmittel'].url | default: '/collections/leuchtmittel' }}">Leuchtmittel-Kollektion</a>.</p>
+      {%- endif -%}
+      <p class="lx-acc__notice">Der Anschluss fest installierter Leuchten an das Hausnetz darf nur durch eine Elektrofachkraft erfolgen. Vor der Montage Strom am Sicherungskasten abschalten.</p>
+      {%- if manual_url != blank -%}
+        <ul class="lx-acc__links" role="list">
+          <li><a href="{{ manual_url }}" target="_blank" rel="noopener">Montageanleitung (PDF)</a></li>
+        </ul>
+      {%- endif -%}
+    </div>
+  </details>
+
+  {%- comment -%} 3. Versand & Bruchsicherheit {%- endcomment -%}
+  <details class="lx-acc__item" data-acc="shipping">
+    <summary class="lx-acc__summary">Versand &amp; Bruchsicherheit</summary>
+    <div class="lx-acc__body rte">
+      {%- if shipping_page.content != blank -%}
+        {{ shipping_page.content }}
+      {%- else -%}
+        <p><strong>Versand in 1–3 Werktagen</strong> innerhalb Deutschlands, nach Österreich und in die Schweiz in 3–5 Werktagen. Große Stehleuchten und Pendelleuchten mit Übermaß versenden wir als Sperrgut oder per Spedition mit Terminavis.</p>
+        <p><strong>Bruchsicher verpackt:</strong> Glas-, Keramik- und Stoffschirme werden separat in doppelwandigen Kartons mit passgenauen Formteilen verpackt – ohne Plastik-Füllmaterial.</p>
+        <p><strong>Transportschaden?</strong> Bitte melde dich möglichst sofort mit einem Foto von Verpackung und Ware – wir senden schnellstmöglich Ersatz. Deine gesetzlichen Rechte bleiben davon unberührt.</p>
+        <p><strong>30 Tage Rückgaberecht</strong> für unbenutzte Ware in Originalverpackung.</p>
+      {%- endif -%}
+    </div>
+  </details>
+
+  {%- comment -%} 4. Produktsicherheit (GPSR) {%- endcomment -%}
+  <details class="lx-acc__item" data-acc="safety">
+    <summary class="lx-acc__summary">Produktsicherheit &amp; Hersteller</summary>
+    <div class="lx-acc__body">
+      <p><strong>Hersteller</strong><br>
+        {%- if gpsr_manufacturer != blank -%}
+          {{ gpsr_manufacturer.value | escape | newline_to_br }}
+        {%- else -%}
+          {{ product.vendor }}
+        {%- endif -%}
+      </p>
+      {%- if gpsr_responsible != blank -%}
+        <p><strong>Verantwortliche Person in der EU</strong><br>{{ gpsr_responsible.value | escape | newline_to_br }}</p>
+      {%- endif -%}
+      {%- if safety_notes != blank -%}
+        <div class="lx-acc__notice">
+          <strong>Sicherheitshinweise</strong><br>
+          {%- if safety_notes.type contains 'rich_text' -%}
+            {{ safety_notes | metafield_tag }}
+          {%- else -%}
+            {{ safety_notes.value | escape | newline_to_br }}
+          {%- endif -%}
+        </div>
+      {%- endif -%}
+      <p>Elektro-Altgeräte gehören nicht in den Hausmüll. Informationen zur kostenlosen Rücknahme findest du in unseren <a href="{{ pages['altgeraete-ruecknahme'].url | default: '/pages/altgeraete-ruecknahme' }}">Hinweisen zur Altgeräte-Rücknahme</a>.</p>
+    </div>
+  </details>
+</div>

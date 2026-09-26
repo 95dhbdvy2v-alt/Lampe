@@ -1,0 +1,200 @@
+{
+  "sections": {
+    "hero": {
+      "type": "image-banner",
+      "blocks": {
+        "hero_eyebrow": {
+          "type": "text",
+          "settings": {
+            "text": "Designleuchten · Handverlesen",
+            "text_style": "caption-with-letter-spacing"
+          }
+        },
+        "hero_heading": {
+          "type": "heading",
+          "settings": {
+            "heading": "Lichtkonzepte für dein Zuhause",
+            "heading_size": "h0"
+          }
+        },
+        "hero_text": {
+          "type": "text",
+          "settings": {
+            "text": "Leuchten, die Räume verwandeln – kuratiert von Lichtplanern, energieeffizient und bruchsicher geliefert.",
+            "text_style": "body"
+          }
+        },
+        "hero_buttons": {
+          "type": "buttons",
+          "settings": {
+            "button_label_1": "Kollektion entdecken",
+            "button_link_1": "/collections/all",
+            "button_style_secondary_1": false,
+            "button_label_2": "Zum Lichtberater",
+            "button_link_2": "/pages/lichtberater",
+            "button_style_secondary_2": true
+          }
+        }
+      },
+      "block_order": ["hero_eyebrow", "hero_heading", "hero_text", "hero_buttons"],
+      "settings": {
+        "image_overlay_opacity": 30,
+        "image_height": "large",
+        "desktop_content_position": "bottom-left",
+        "show_text_box": false,
+        "desktop_content_alignment": "left",
+        "color_scheme": "scheme-3",
+        "mobile_content_alignment": "left",
+        "stack_images_on_mobile": false,
+        "show_text_below": false
+      }
+    },
+    "usp": {
+      "type": "lx-usp-bar",
+      "blocks": {
+        "usp_shipping": {
+          "type": "usp",
+          "settings": { "icon": "truck", "title": "Schneller Versand", "text": "In 1–3 Werktagen bei dir – DE, AT & CH" }
+        },
+        "usp_energy": {
+          "type": "usp",
+          "settings": { "icon": "leaf", "title": "Energieeffizient", "text": "LED-Technik mit EU-Energielabel" }
+        },
+        "usp_return": {
+          "type": "usp",
+          "settings": { "icon": "return", "title": "30 Tage Rückgabe", "text": "Entspannt zu Hause ausprobieren" }
+        },
+        "usp_packaging": {
+          "type": "usp",
+          "settings": { "icon": "box", "title": "Bruchsicher verpackt", "text": "Glas & Keramik in Spezialkartons" }
+        }
+      },
+      "block_order": ["usp_shipping", "usp_energy", "usp_return", "usp_packaging"],
+      "settings": {
+        "heading": "",
+        "color_scheme": "scheme-2",
+        "padding_top": 36,
+        "padding_bottom": 36
+      }
+    },
+    "categories": {
+      "type": "collection-list",
+      "blocks": {
+        "cat_pendant": {
+          "type": "featured_collection",
+          "settings": { "collection": "pendelleuchten" }
+        },
+        "cat_floor": {
+          "type": "featured_collection",
+          "settings": { "collection": "stehleuchten" }
+        },
+        "cat_smart": {
+          "type": "featured_collection",
+          "settings": { "collection": "smart-lighting" }
+        }
+      },
+      "block_order": ["cat_pendant", "cat_floor", "cat_smart"],
+      "settings": {
+        "title": "Finde dein Licht",
+        "heading_size": "h1",
+        "image_ratio": "portrait",
+        "columns_desktop": 3,
+        "color_scheme": "scheme-1",
+        "show_view_all": false,
+        "columns_mobile": "1",
+        "swipe_on_mobile": true,
+        "padding_top": 64,
+        "padding_bottom": 36
+      }
+    },
+    "bestseller": {
+      "type": "featured-collection",
+      "settings": {
+        "title": "Bestseller – im besten Licht",
+        "heading_size": "h1",
+        "collection": "bestseller",
+        "products_to_show": 8,
+        "columns_desktop": 4,
+        "full_width": false,
+        "show_view_all": true,
+        "view_all_style": "link",
+        "enable_desktop_slider": true,
+        "color_scheme": "scheme-2",
+        "image_ratio": "portrait",
+        "show_secondary_image": true,
+        "show_vendor": false,
+        "show_rating": false,
+        "columns_mobile": "2",
+        "swipe_on_mobile": true,
+        "padding_top": 64,
+        "padding_bottom": 64
+      }
+    },
+    "shop_the_look": {
+      "type": "lx-shop-the-look",
+      "blocks": {
+        "spot_pendant": {
+          "type": "hotspot",
+          "settings": { "x": 42, "y": 18 }
+        },
+        "spot_floor": {
+          "type": "hotspot",
+          "settings": { "x": 80, "y": 52 }
+        },
+        "spot_table": {
+          "type": "hotspot",
+          "settings": { "x": 18, "y": 64 }
+        }
+      },
+      "block_order": ["spot_pendant", "spot_floor", "spot_table"],
+      "settings": {
+        "image_position": "left",
+        "eyebrow": "Inspiration",
+        "heading": "Shop the Look: Wohnzimmer in Messing & Schwarz",
+        "text": "<p>Eine Pendelleuchte als Blickfang, dazu eine Stehleuchte für Leselicht und warmes Akzentlicht auf dem Sideboard – drei Lichtebenen für einen wohnlichen Raum.</p>",
+        "button_label": "Alle Wohnzimmerleuchten",
+        "button_link": "/collections/all",
+        "color_scheme": "scheme-1",
+        "padding_top": 64,
+        "padding_bottom": 64
+      }
+    },
+    "light_advisor": {
+      "type": "lx-light-advisor",
+      "blocks": {
+        "k2200": {
+          "type": "kelvin",
+          "settings": { "kelvin": 2200, "title": "Extra-Warmweiß", "mood": "Kerzenähnlich, sehr intim – für Abendstimmung und Dinner.", "rooms": "Esstisch, Schlafzimmer, Lounge", "color": "#FFC58A" }
+        },
+        "k2700": {
+          "type": "kelvin",
+          "settings": { "kelvin": 2700, "title": "Warmweiß", "mood": "Gemütlich und entspannend – wie klassisches Glühlampenlicht.", "rooms": "Wohnzimmer, Schlafzimmer, Esszimmer", "color": "#FFD29C" }
+        },
+        "k3000": {
+          "type": "kelvin",
+          "settings": { "kelvin": 3000, "title": "Warmweiß hell", "mood": "Freundlich und klar, bleibt aber wohnlich.", "rooms": "Küche, Bad, Flur", "color": "#FFE0B8" }
+        },
+        "k4000": {
+          "type": "kelvin",
+          "settings": { "kelvin": 4000, "title": "Neutralweiß", "mood": "Sachlich und aktivierend – fördert die Konzentration.", "rooms": "Arbeitszimmer, Küchenarbeitsfläche", "color": "#FFF1DC" }
+        }
+      },
+      "block_order": ["k2200", "k2700", "k3000", "k4000"],
+      "settings": {
+        "eyebrow": "Lichtberater",
+        "heading": "Welches Licht passt zu dir?",
+        "intro": "<p>2700 K wirkt warm und gemütlich, 4000 K neutral und konzentriert. Wähle eine Lichtfarbe und sieh dir die Wirkung an.</p>",
+        "show_scale": true,
+        "show_basics": false,
+        "show_calculator": false,
+        "calculator_heading": "Wie hell muss es sein?",
+        "button_label": "Zum ausführlichen Lichtberater",
+        "button_link": "/pages/lichtberater",
+        "color_scheme": "scheme-2",
+        "padding_top": 64,
+        "padding_bottom": 64
+      }
+    }
+  },
+  "order": ["hero", "usp", "categories", "bestseller", "shop_the_look", "light_advisor"]
+}

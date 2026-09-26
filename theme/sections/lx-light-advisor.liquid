@@ -1,0 +1,396 @@
+{%- comment -%}
+  LUMEN – Lichtberater / Buying Guide
+  - Lichtfarben-Auswahl (Kelvin-Blöcke) mit Live-Vorschau der Lichtstimmung
+  - Kelvin-Skala, Grundlagen (Lumen statt Watt, IP-Schutzarten, Ra, Dimmen)
+  - Lumen-Rechner (Raum-Blöcke mit Lux-Richtwert)
+  Vanilla Liquid/CSS/JS, mobile-first, ohne externe Abhängigkeiten.
+{%- endcomment -%}
+{%- liquid
+  assign kelvin_blocks = section.blocks | where: 'type', 'kelvin'
+  assign room_blocks = section.blocks | where: 'type', 'room'
+  assign first = kelvin_blocks | first
+-%}
+<div
+  id="lx-advisor-{{ section.id }}"
+  class="lx-advisor color-{{ section.settings.color_scheme }} gradient"
+  style="--lx-pt: {{ section.settings.padding_top }}px; --lx-pb: {{ section.settings.padding_bottom }}px;"
+  data-lx-advisor
+>
+  <div class="page-width">
+    <header class="lx-advisor__head">
+      {%- if section.settings.eyebrow != blank -%}
+        <p class="lx-eyebrow">{{ section.settings.eyebrow }}</p>
+      {%- endif -%}
+      {%- if section.settings.heading != blank -%}
+        <h2 class="lx-advisor__title h1">{{ section.settings.heading }}</h2>
+      {%- endif -%}
+      {%- if section.settings.intro != blank -%}
+        <div class="lx-advisor__intro rte">{{ section.settings.intro }}</div>
+      {%- endif -%}
+    </header>
+
+    {%- if kelvin_blocks.size > 0 -%}
+      <div class="lx-advisor__grid">
+        <figure class="lx-advisor__preview" style="--lx-tint: {{ first.settings.color }};" data-lx-preview>
+          {%- if section.settings.preview_image != blank -%}
+            {{
+              section.settings.preview_image
+              | image_url: width: 1600
+              | image_tag:
+                class: 'lx-advisor__preview-img',
+                loading: 'lazy',
+                widths: '600, 900, 1200, 1600',
+                sizes: '(min-width: 990px) 50vw, 100vw'
+            }}
+          {%- endif -%}
+          <span class="lx-advisor__tint" aria-hidden="true"></span>
+          <span class="lx-advisor__glow" aria-hidden="true"></span>
+          <figcaption class="lx-advisor__caption" aria-live="polite">
+            <span class="lx-advisor__caption-k" data-lx-k>{{ first.settings.kelvin }} K</span>
+            <span data-lx-name>{{ first.settings.title }}</span>
+          </figcaption>
+        </figure>
+
+        <div class="lx-advisor__options" role="group" aria-label="Lichtfarbe wählen">
+          {%- for block in kelvin_blocks -%}
+            <button
+              type="button"
+              class="lx-advisor__option"
+              aria-pressed="{% if forloop.first %}true{% else %}false{% endif %}"
+              data-k="{{ block.settings.kelvin }}"
+              data-name="{{ block.settings.title | escape }}"
+              data-color="{{ block.settings.color }}"
+              style="--lx-swatch: {{ block.settings.color }};"
+              {{ block.shopify_attributes }}
+            >
+              <span class="lx-advisor__swatch" aria-hidden="true"></span>
+              <span class="lx-advisor__option-body">
+                <span class="lx-advisor__option-k">{{ block.settings.kelvin }} K · {{ block.settings.title }}</span>
+                {%- if block.settings.mood != blank -%}
+                  <span class="lx-advisor__option-mood">{{ block.settings.mood }}</span>
+                {%- endif -%}
+                {%- if block.settings.rooms != blank -%}
+                  <span class="lx-advisor__option-rooms">Ideal für: {{ block.settings.rooms }}</span>
+                {%- endif -%}
+              </span>
+            </button>
+          {%- endfor -%}
+        </div>
+      </div>
+
+      {%- if section.settings.show_scale -%}
+        <div class="lx-advisor__scale" aria-hidden="true">
+          <div class="lx-advisor__scale-bar">
+            {%- for block in kelvin_blocks -%}
+              {%- assign pos = block.settings.kelvin | minus: 1800 | times: 100.0 | divided_by: 4700 | round: 1 -%}
+              <span class="lx-advisor__scale-mark" style="left: {{ pos }}%;"><span>{{ block.settings.kelvin }} K</span></span>
+            {%- endfor -%}
+          </div>
+          <div class="lx-advisor__scale-labels"><span>gemütlich · entspannend</span><span>aktivierend · konzentriert</span></div>
+        </div>
+      {%- endif -%}
+    {%- endif -%}
+
+    {%- if section.settings.show_basics -%}
+      <div class="lx-advisor__basics">
+        <div class="lx-advisor__card">
+          <h3 class="lx-advisor__card-title">Lumen statt Watt</h3>
+          <p>Die Helligkeit einer LED misst man in Lumen (lm). Zum Vergleich mit klassischen Glühlampen:</p>
+          <table class="lx-advisor__table">
+            <thead><tr><th scope="col">LED</th><th scope="col">entspricht Glühlampe</th></tr></thead>
+            <tbody>
+              <tr><td>250 lm</td><td>25 W</td></tr>
+              <tr><td>470 lm</td><td>40 W</td></tr>
+              <tr><td>806 lm</td><td>60 W</td></tr>
+              <tr><td>1.055 lm</td><td>75 W</td></tr>
+              <tr><td>1.521 lm</td><td>100 W</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="lx-advisor__card">
+          <h3 class="lx-advisor__card-title">Schutzart (IP)</h3>
+          <dl class="lx-advisor__dl">
+            <dt>IP20</dt><dd>Wohnräume, trockene Innenräume</dd>
+            <dt>IP44</dt><dd>Bad (außerhalb Dusche/Wanne), überdachter Außenbereich</dd>
+            <dt>IP65</dt><dd>Garten &amp; Fassade, strahlwassergeschützt</dd>
+            <dt>IP67</dt><dd>Bodeneinbau, zeitweiliges Untertauchen</dd>
+          </dl>
+        </div>
+        <div class="lx-advisor__card">
+          <h3 class="lx-advisor__card-title">Farbwiedergabe (Ra)</h3>
+          <p>Ab <strong>Ra 90</strong> wirken Holz, Stoffe, Speisen und Haut natürlich – ideal für Esstisch, Bad und Ankleide. Ra 80 genügt für Flur und Nebenräume.</p>
+        </div>
+        <div class="lx-advisor__card">
+          <h3 class="lx-advisor__card-title">Dimmen</h3>
+          <p>Nur dimmbare Leuchtmittel an Dimmern verwenden. Für LED eignen sich meist <strong>Phasenabschnittdimmer</strong>; Smart-Leuchten (Zigbee, Matter) dimmen per App oder Schalter.</p>
+        </div>
+      </div>
+    {%- endif -%}
+
+    {%- if section.settings.show_calculator -%}
+      <div class="lx-advisor__calc" data-lx-calc>
+        <h3 class="lx-advisor__card-title">{{ section.settings.calculator_heading }}</h3>
+        <div class="lx-advisor__calc-fields">
+          <div class="lx-advisor__field">
+            <label for="lx-room-{{ section.id }}">Raum</label>
+            <select id="lx-room-{{ section.id }}" data-lx-room>
+              {%- if room_blocks.size > 0 -%}
+                {%- for block in room_blocks -%}
+                  <option value="{{ block.settings.lux }}" {{ block.shopify_attributes }}>{{ block.settings.name }} (≈ {{ block.settings.lux }} lx)</option>
+                {%- endfor -%}
+              {%- else -%}
+                <option value="100">Wohnzimmer (≈ 100 lx)</option>
+                <option value="200">Esszimmer (≈ 200 lx)</option>
+                <option value="300">Küche (≈ 300 lx)</option>
+                <option value="500">Arbeitszimmer (≈ 500 lx)</option>
+              {%- endif -%}
+            </select>
+          </div>
+          <div class="lx-advisor__field">
+            <label for="lx-area-{{ section.id }}">Fläche in m²</label>
+            <input id="lx-area-{{ section.id }}" type="number" min="1" max="500" step="0.5" value="20" inputmode="decimal" data-lx-area>
+          </div>
+        </div>
+        <output class="lx-advisor__result" for="lx-room-{{ section.id }} lx-area-{{ section.id }}" aria-live="polite" data-lx-result></output>
+        <p class="lx-advisor__note">Richtwert für die Grundbeleuchtung (Lichtstrom ≈ Beleuchtungsstärke × Fläche). Dunkle Wände, hohe Decken und Akzentlicht erhöhen den Bedarf.</p>
+      </div>
+    {%- endif -%}
+
+    {%- if section.settings.button_label != blank -%}
+      <div class="lx-advisor__cta">
+        <a class="button" href="{{ section.settings.button_link | default: routes.all_products_collection_url }}">{{ section.settings.button_label }}</a>
+      </div>
+    {%- endif -%}
+  </div>
+</div>
+
+{% stylesheet %}
+  .lx-advisor { padding: calc(var(--lx-pt) * 0.75) 0 calc(var(--lx-pb) * 0.75); }
+  .lx-advisor__head { max-width: 64rem; margin: 0 auto 3.2rem; text-align: center; }
+  .lx-advisor__title { margin: 0.8rem 0 1.2rem; }
+  .lx-advisor__intro { color: rgba(var(--color-foreground), 0.8); }
+
+  /* Auswahl + Vorschau */
+  .lx-advisor__grid { display: grid; gap: 2.4rem; }
+  .lx-advisor__preview {
+    position: relative; margin: 0; aspect-ratio: 4 / 3; overflow: hidden;
+    background: radial-gradient(120% 90% at 50% 0%, var(--lx-tint) 0%, #2a2724 70%);
+    transition: background 0.8s ease;
+  }
+  .lx-advisor__preview-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .lx-advisor__tint {
+    position: absolute; inset: 0; background: var(--lx-tint);
+    mix-blend-mode: multiply; opacity: 0.55; transition: background-color 0.8s ease;
+  }
+  .lx-advisor__glow {
+    position: absolute; inset: 0; pointer-events: none;
+    background: radial-gradient(60% 50% at 50% 18%, var(--lx-tint), transparent 70%);
+    mix-blend-mode: screen; opacity: 0.6; transition: background 0.8s ease;
+  }
+  .lx-advisor__caption {
+    position: absolute; left: 1.6rem; bottom: 1.6rem; display: flex; flex-direction: column;
+    padding: 1rem 1.4rem; background: rgba(20, 19, 18, 0.72); color: #FAF7F2; font-size: 1.3rem;
+  }
+  .lx-advisor__caption-k { font-family: var(--lx-font-heading, serif); font-size: 2.6rem; line-height: 1.1; }
+
+  .lx-advisor__options { display: grid; gap: 1rem; }
+  .lx-advisor__option {
+    display: flex; gap: 1.4rem; align-items: flex-start; width: 100%;
+    padding: 1.4rem 1.6rem; text-align: left; cursor: pointer;
+    font: inherit; color: rgb(var(--color-foreground));
+    background: rgb(var(--color-background));
+    border: 1px solid rgba(var(--color-foreground), 0.14);
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  }
+  .lx-advisor__option:hover { border-color: rgba(var(--color-foreground), 0.4); }
+  .lx-advisor__option[aria-pressed="true"] { border-color: var(--lx-brass, #B08D57); box-shadow: inset 0 0 0 1px var(--lx-brass, #B08D57); }
+  .lx-advisor__option:focus-visible { outline: 2px solid rgb(var(--color-foreground)); outline-offset: 2px; }
+  .lx-advisor__swatch {
+    flex: none; width: 3.2rem; height: 3.2rem; border-radius: 50%; background: var(--lx-swatch);
+    box-shadow: 0 0 0 1px rgba(var(--color-foreground), 0.12), 0 0 1.6rem var(--lx-swatch);
+  }
+  .lx-advisor__option-body { display: flex; flex-direction: column; gap: 0.3rem; }
+  .lx-advisor__option-k { font-size: 1.5rem; font-weight: 500; letter-spacing: 0.04em; }
+  .lx-advisor__option-mood { font-size: 1.4rem; line-height: 1.45; color: rgba(var(--color-foreground), 0.8); }
+  .lx-advisor__option-rooms { font-size: 1.2rem; letter-spacing: 0.06em; text-transform: uppercase; color: rgba(var(--color-foreground), 0.6); }
+
+  /* Kelvin-Skala */
+  .lx-advisor__scale { margin: 4rem 0 0; }
+  .lx-advisor__scale-bar {
+    position: relative; height: 0.8rem; margin: 3rem 0;
+    background: linear-gradient(90deg, #FFB46B 0%, #FFD29C 20%, #FFE9CC 40%, #FFF6EA 60%, #F4F6FF 80%, #DDE6FF 100%);
+    box-shadow: inset 0 0 0 1px rgba(var(--color-foreground), 0.08);
+  }
+  .lx-advisor__scale-mark { position: absolute; top: 50%; width: 1px; height: 2rem; transform: translateY(-50%); background: rgb(var(--color-foreground)); }
+  .lx-advisor__scale-mark > span { position: absolute; left: 50%; transform: translateX(-50%); white-space: nowrap; font-size: 1.1rem; bottom: calc(100% + 0.4rem); }
+  .lx-advisor__scale-mark:nth-child(even) > span { bottom: auto; top: calc(100% + 0.4rem); }
+  .lx-advisor__scale-labels { display: flex; justify-content: space-between; font-size: 1.2rem; letter-spacing: 0.08em; text-transform: uppercase; color: rgba(var(--color-foreground), 0.65); }
+
+  /* Grundlagen */
+  .lx-advisor__basics { display: grid; gap: 1.6rem; margin-top: 4.8rem; }
+  .lx-advisor__card, .lx-advisor__calc { padding: 2.4rem 2rem; background: rgba(var(--color-foreground), 0.035); }
+  .lx-advisor__card p { margin: 0 0 1.2rem; font-size: 1.45rem; line-height: 1.55; }
+  .lx-advisor__card-title { margin: 0 0 1.2rem; font-size: 2.2rem; }
+  .lx-advisor__table { width: 100%; border-collapse: collapse; font-size: 1.4rem; }
+  .lx-advisor__table th, .lx-advisor__table td { padding: 0.6rem 0; text-align: left; border-bottom: 1px solid rgba(var(--color-foreground), 0.1); }
+  .lx-advisor__table th { font-weight: 500; }
+  .lx-advisor__dl { display: grid; grid-template-columns: auto 1fr; gap: 0.6rem 1.2rem; margin: 0; font-size: 1.4rem; }
+  .lx-advisor__dl dt { font-weight: 600; }
+  .lx-advisor__dl dd { margin: 0; }
+
+  /* Rechner */
+  .lx-advisor__calc { margin-top: 1.6rem; }
+  .lx-advisor__calc-fields { display: grid; gap: 1.2rem; }
+  .lx-advisor__field { display: flex; flex-direction: column; gap: 0.4rem; font-size: 1.3rem; }
+  .lx-advisor__field select, .lx-advisor__field input {
+    min-height: 4.6rem; padding: 0 1.2rem; font: inherit; font-size: 1.6rem;
+    color: rgb(var(--color-foreground)); background: rgb(var(--color-background));
+    border: 1px solid rgba(var(--color-foreground), 0.3); border-radius: 0;
+  }
+  .lx-advisor__result { display: flex; flex-direction: column; gap: 0.4rem; margin: 2rem 0 1rem; min-height: 5rem; }
+  .lx-advisor__result strong { font-family: var(--lx-font-heading, serif); font-size: 3.2rem; font-weight: 500; line-height: 1.1; }
+  .lx-advisor__result span { font-size: 1.4rem; color: rgba(var(--color-foreground), 0.75); }
+  .lx-advisor__note { margin: 0; font-size: 1.2rem; color: rgba(var(--color-foreground), 0.6); }
+  .lx-advisor__cta { margin-top: 3.2rem; text-align: center; }
+
+  @media screen and (min-width: 750px) {
+    .lx-advisor__basics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .lx-advisor__calc-fields { grid-template-columns: 2fr 1fr; }
+  }
+  @media screen and (min-width: 990px) {
+    .lx-advisor { padding: var(--lx-pt) 0 var(--lx-pb); }
+    .lx-advisor__grid { grid-template-columns: 1fr 1fr; gap: 4.8rem; align-items: start; }
+    .lx-advisor__preview { position: sticky; top: 2.4rem; aspect-ratio: 1 / 1; }
+    .lx-advisor__basics { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .lx-advisor__calc { display: grid; grid-template-columns: 1fr 2fr 1fr; gap: 3.2rem; align-items: center; padding: 3.2rem; }
+    .lx-advisor__calc .lx-advisor__card-title { margin: 0; }
+    .lx-advisor__result { margin: 0; }
+    .lx-advisor__note { grid-column: 1 / -1; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .lx-advisor__preview, .lx-advisor__tint, .lx-advisor__glow { transition: none; }
+  }
+{% endstylesheet %}
+
+{% javascript %}
+  (function () {
+    var fmt = new Intl.NumberFormat('de-DE');
+
+    function init(root) {
+      if (!root || root.dataset.lxReady) return;
+      root.dataset.lxReady = '1';
+
+      var preview = root.querySelector('[data-lx-preview]');
+      var options = root.querySelectorAll('.lx-advisor__option');
+      options.forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          options.forEach(function (b) { b.setAttribute('aria-pressed', b === btn ? 'true' : 'false'); });
+          if (!preview) return;
+          preview.style.setProperty('--lx-tint', btn.dataset.color);
+          preview.querySelector('[data-lx-k]').textContent = btn.dataset.k + ' K';
+          preview.querySelector('[data-lx-name]').textContent = btn.dataset.name;
+        });
+      });
+
+      var calc = root.querySelector('[data-lx-calc]');
+      if (!calc) return;
+      var room = calc.querySelector('[data-lx-room]');
+      var area = calc.querySelector('[data-lx-area]');
+      var out = calc.querySelector('[data-lx-result]');
+
+      function update() {
+        var lux = parseFloat(room.value) || 0;
+        var m2 = parseFloat(String(area.value).replace(',', '.')) || 0;
+        out.textContent = '';
+        if (!lux || !m2) return;
+        var lm = Math.round((lux * m2) / 50) * 50;
+        var bulbs = Math.max(1, Math.ceil(lm / 806));
+        var strong = document.createElement('strong');
+        strong.textContent = '≈ ' + fmt.format(lm) + ' Lumen';
+        var hint = document.createElement('span');
+        hint.textContent = 'z. B. ' + bulbs + ' × 806 lm (je vergleichbar mit einer 60-W-Glühlampe)';
+        out.appendChild(strong);
+        out.appendChild(hint);
+      }
+      room.addEventListener('change', update);
+      area.addEventListener('input', update);
+      update();
+    }
+
+    function initAll() {
+      document.querySelectorAll('[data-lx-advisor]').forEach(init);
+    }
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initAll);
+    } else {
+      initAll();
+    }
+    document.addEventListener('shopify:section:load', function (e) {
+      init(e.target.querySelector('[data-lx-advisor]'));
+    });
+  })();
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "LUMEN: Lichtberater",
+  "tag": "section",
+  "class": "section",
+  "max_blocks": 16,
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Dachzeile", "default": "Lichtberater" },
+    { "type": "text", "id": "heading", "label": "Überschrift", "default": "Welches Licht passt zu dir?" },
+    { "type": "richtext", "id": "intro", "label": "Einleitung", "default": "<p>Die Lichtfarbe wird in Kelvin (K) angegeben: Je niedriger der Wert, desto wärmer und gemütlicher wirkt das Licht. Wähle eine Lichtfarbe und sieh dir die Wirkung an.</p>" },
+    { "type": "image_picker", "id": "preview_image", "label": "Vorschaubild (Raum)", "info": "Neutral ausgeleuchtetes Raumfoto – die Lichtfarbe wird darübergelegt." },
+    { "type": "checkbox", "id": "show_scale", "label": "Kelvin-Skala anzeigen", "default": true },
+    { "type": "checkbox", "id": "show_basics", "label": "Grundlagen anzeigen (Lumen, IP, Ra, Dimmen)", "default": true },
+    { "type": "checkbox", "id": "show_calculator", "label": "Lumen-Rechner anzeigen", "default": true },
+    { "type": "text", "id": "calculator_heading", "label": "Überschrift Rechner", "default": "Wie hell muss es sein?" },
+    { "type": "text", "id": "button_label", "label": "Button-Text", "default": "Leuchten entdecken" },
+    { "type": "url", "id": "button_link", "label": "Button-Link" },
+    { "type": "color_scheme", "id": "color_scheme", "label": "Farbschema", "default": "scheme-1" },
+    { "type": "range", "id": "padding_top", "label": "Abstand oben", "min": 0, "max": 100, "step": 4, "unit": "px", "default": 64 },
+    { "type": "range", "id": "padding_bottom", "label": "Abstand unten", "min": 0, "max": 100, "step": 4, "unit": "px", "default": 64 }
+  ],
+  "blocks": [
+    {
+      "type": "kelvin",
+      "name": "Lichtfarbe",
+      "settings": [
+        { "type": "range", "id": "kelvin", "label": "Farbtemperatur", "min": 1800, "max": 6500, "step": 100, "unit": "K", "default": 2700 },
+        { "type": "text", "id": "title", "label": "Bezeichnung", "default": "Warmweiß" },
+        { "type": "textarea", "id": "mood", "label": "Wirkung", "default": "Gemütlich und entspannend – wie klassisches Glühlampenlicht." },
+        { "type": "text", "id": "rooms", "label": "Räume", "default": "Wohnzimmer, Schlafzimmer, Esszimmer" },
+        { "type": "color", "id": "color", "label": "Vorschaufarbe", "default": "#FFD29C" }
+      ]
+    },
+    {
+      "type": "room",
+      "name": "Raum (Rechner)",
+      "settings": [
+        { "type": "text", "id": "name", "label": "Raum", "default": "Wohnzimmer" },
+        { "type": "range", "id": "lux", "label": "Beleuchtungsstärke", "min": 50, "max": 750, "step": 50, "unit": "lx", "default": 100 }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "LUMEN: Lichtberater",
+      "blocks": [
+        { "type": "kelvin", "settings": { "kelvin": 2200, "title": "Extra-Warmweiß", "mood": "Kerzenähnlich, sehr intim – für Abendstimmung und Dinner.", "rooms": "Esstisch, Schlafzimmer, Lounge", "color": "#FFC58A" } },
+        { "type": "kelvin", "settings": { "kelvin": 2700, "title": "Warmweiß", "mood": "Gemütlich und entspannend – wie klassisches Glühlampenlicht.", "rooms": "Wohnzimmer, Schlafzimmer, Esszimmer", "color": "#FFD29C" } },
+        { "type": "kelvin", "settings": { "kelvin": 3000, "title": "Warmweiß hell", "mood": "Freundlich und klar, bleibt aber wohnlich.", "rooms": "Küche, Bad, Flur", "color": "#FFE0B8" } },
+        { "type": "kelvin", "settings": { "kelvin": 4000, "title": "Neutralweiß", "mood": "Sachlich und aktivierend – fördert die Konzentration.", "rooms": "Arbeitszimmer, Küchenarbeitsfläche, Hobbyraum", "color": "#FFF1DC" } },
+        { "type": "kelvin", "settings": { "kelvin": 5000, "title": "Tageslichtweiß", "mood": "Sehr klar und kühl – für präzises Arbeiten.", "rooms": "Werkstatt, Keller, Ankleide (Make-up)", "color": "#F4F6FF" } },
+        { "type": "room", "settings": { "name": "Wohnzimmer", "lux": 100 } },
+        { "type": "room", "settings": { "name": "Schlafzimmer", "lux": 100 } },
+        { "type": "room", "settings": { "name": "Flur", "lux": 100 } },
+        { "type": "room", "settings": { "name": "Esszimmer", "lux": 200 } },
+        { "type": "room", "settings": { "name": "Badezimmer", "lux": 200 } },
+        { "type": "room", "settings": { "name": "Küche", "lux": 300 } },
+        { "type": "room", "settings": { "name": "Arbeitszimmer", "lux": 500 } }
+      ]
+    }
+  ]
+}
+{% endschema %}

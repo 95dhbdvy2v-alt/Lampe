@@ -1,0 +1,98 @@
+{%- comment -%}
+  EU-Energielabel für Lichtquellen (VO (EU) 2019/2015, Anhang VII):
+  farbiger Klassenpfeil mit Skala A–G; Klick öffnet das vollständige Label,
+  daneben Link zum Produktdatenblatt (EPREL).
+
+  Metafelder (Variante vor Produkt):
+    compliance.energy_class                 A–G
+    compliance.energy_label                 Datei (Bild/PDF) oder URL
+    compliance.product_fiche                URL Produktdatenblatt
+    compliance.eprel_id                     EPREL-Nummer (Fallback-Link)
+    compliance.contained_light_source_class Klasse mitgelieferter Lichtquelle (Leuchten)
+
+  Parameter:
+    product  – Pflicht
+    variant  – optional, Standard: ausgewählte Variante
+    compact  – true für Produktkarten (Link statt Dialog)
+
+  Verwendung:
+    {% render 'lamp-energy-label', product: product %}
+    {% render 'lamp-energy-label', product: card_product, compact: true %}
+{%- endcomment -%}
+{%- liquid
+  assign v = variant | default: product.selected_or_first_available_variant
+  assign valid_classes = 'A,B,C,D,E,F,G' | split: ','
+
+  assign energy_class = v.metafields.compliance.energy_class.value | default: product.metafields.compliance.energy_class.value | strip | upcase
+  assign contained_class = product.metafields.compliance.contained_light_source_class.value | strip | upcase
+  assign label_mf = v.metafields.compliance.energy_label | default: product.metafields.compliance.energy_label
+  assign fiche_url = v.metafields.compliance.product_fiche.value | default: product.metafields.compliance.product_fiche.value
+  assign eprel_id = v.metafields.compliance.eprel_id.value | default: product.metafields.compliance.eprel_id.value
+
+  if fiche_url == blank and eprel_id != blank
+    assign fiche_url = 'https://eprel.ec.europa.eu/qr/' | append: eprel_id
+  endif
+
+  assign label_src = blank
+  if label_mf != blank
+    if label_mf.type == 'url' or label_mf.type == 'single_line_text_field'
+      assign label_src = label_mf.value
+    else
+      assign label_media = label_mf.value.preview_image | default: label_mf.value
+      if label_mf.value.media_type == 'image' or label_mf.value.preview_image != blank
+        assign label_src = label_media | image_url: width: 900
+      else
+        assign label_src = label_mf.value.url
+      endif
+    endif
+  endif
+
+  assign label_is_pdf = false
+  if label_src contains '.pdf'
+    assign label_is_pdf = true
+  endif
+
+  assign swap_attr = ''
+  unless compact
+    assign swap_attr = 'data-lamp-swap="energy-' | append: product.id | append: '"'
+  endunless
+-%}
+
+{%- if valid_classes contains energy_class and energy_class != blank -%}
+  {%- capture badge_inner -%}
+    <span class="lx-energy__scale" aria-hidden="true"><span>A</span><span>G</span></span>
+    <span class="lx-energy__class" aria-hidden="true">{{ energy_class }}</span>
+  {%- endcapture -%}
+  {%- capture badge_label -%}Energieeffizienzklasse {{ energy_class }} (Skala A bis G){%- endcapture -%}
+
+  <div class="lx-energy{% if compact %} lx-energy--compact{% endif %}" {{ swap_attr }}>
+    {%- if label_src == blank -%}
+      <span class="lx-energy__badge lx-energy__badge--{{ energy_class | downcase }}" role="img" aria-label="{{ badge_label }}">{{ badge_inner }}</span>
+    {%- elsif compact or label_is_pdf -%}
+      <a class="lx-energy__badge lx-energy__badge--{{ energy_class | downcase }}" href="{{ label_src }}" target="_blank" rel="noopener" aria-label="{{ badge_label }} – Energielabel öffnen">{{ badge_inner }}</a>
+    {%- else -%}
+      <button type="button" class="lx-energy__badge lx-energy__badge--{{ energy_class | downcase }}" data-energy-open aria-haspopup="dialog" aria-label="{{ badge_label }} – Energielabel anzeigen">{{ badge_inner }}</button>
+      <dialog class="lx-energy__dialog" aria-label="EU-Energielabel">
+        <div class="lx-energy__dialog-inner">
+          <form method="dialog"><button class="lx-energy__close" aria-label="Schließen">&times;</button></form>
+          <img src="{{ label_src }}" alt="EU-Energielabel {{ product.title | escape }}, Klasse {{ energy_class }}" loading="lazy" width="450" height="900">
+          {%- if fiche_url != blank -%}
+            <a class="lx-energy__fiche" href="{{ fiche_url }}" target="_blank" rel="noopener">Produktdatenblatt (EPREL)</a>
+          {%- endif -%}
+        </div>
+      </dialog>
+    {%- endif -%}
+
+    {%- if fiche_url != blank -%}
+      <a class="lx-energy__fiche" href="{{ fiche_url }}" target="_blank" rel="noopener">Produktdatenblatt</a>
+    {%- endif -%}
+  </div>
+
+{%- elsif valid_classes contains contained_class and contained_class != blank and compact != true -%}
+  <div class="lx-energy" {{ swap_attr }}>
+    <p class="lx-energy__note">Dieses Produkt enthält eine Lichtquelle der Energieeffizienzklasse <strong>{{ contained_class }}</strong>.</p>
+  </div>
+{%- elsif compact != true -%}
+  {%- comment -%} Leerer Platzhalter, damit der Variantenwechsel das Label nachladen kann {%- endcomment -%}
+  <div class="lx-energy" hidden {{ swap_attr }}></div>
+{%- endif -%}

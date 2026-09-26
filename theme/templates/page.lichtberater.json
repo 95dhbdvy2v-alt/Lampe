@@ -1,0 +1,55 @@
+{
+  "sections": {
+    "advisor": {
+      "type": "lx-light-advisor",
+      "blocks": {
+        "k2200": {
+          "type": "kelvin",
+          "settings": { "kelvin": 2200, "title": "Extra-Warmweiß", "mood": "Kerzenähnlich, sehr intim – für Abendstimmung und Dinner.", "rooms": "Esstisch, Schlafzimmer, Lounge", "color": "#FFC58A" }
+        },
+        "k2700": {
+          "type": "kelvin",
+          "settings": { "kelvin": 2700, "title": "Warmweiß", "mood": "Gemütlich und entspannend – wie klassisches Glühlampenlicht.", "rooms": "Wohnzimmer, Schlafzimmer, Esszimmer", "color": "#FFD29C" }
+        },
+        "k3000": {
+          "type": "kelvin",
+          "settings": { "kelvin": 3000, "title": "Warmweiß hell", "mood": "Freundlich und klar, bleibt aber wohnlich.", "rooms": "Küche, Bad, Flur", "color": "#FFE0B8" }
+        },
+        "k4000": {
+          "type": "kelvin",
+          "settings": { "kelvin": 4000, "title": "Neutralweiß", "mood": "Sachlich und aktivierend – fördert die Konzentration.", "rooms": "Arbeitszimmer, Küchenarbeitsfläche, Hobbyraum", "color": "#FFF1DC" }
+        },
+        "k5000": {
+          "type": "kelvin",
+          "settings": { "kelvin": 5000, "title": "Tageslichtweiß", "mood": "Sehr klar und kühl – für präzises Arbeiten.", "rooms": "Werkstatt, Keller, Ankleide (Make-up)", "color": "#F4F6FF" }
+        },
+        "r_living": { "type": "room", "settings": { "name": "Wohnzimmer", "lux": 100 } },
+        "r_bed": { "type": "room", "settings": { "name": "Schlafzimmer", "lux": 100 } },
+        "r_hall": { "type": "room", "settings": { "name": "Flur", "lux": 100 } },
+        "r_dining": { "type": "room", "settings": { "name": "Esszimmer", "lux": 200 } },
+        "r_bath": { "type": "room", "settings": { "name": "Badezimmer", "lux": 200 } },
+        "r_kitchen": { "type": "room", "settings": { "name": "Küche", "lux": 300 } },
+        "r_office": { "type": "room", "settings": { "name": "Arbeitszimmer", "lux": 500 } }
+      },
+      "block_order": [
+        "k2200", "k2700", "k3000", "k4000", "k5000",
+        "r_living", "r_bed", "r_hall", "r_dining", "r_bath", "r_kitchen", "r_office"
+      ],
+      "settings": {
+        "eyebrow": "Lichtberater",
+        "heading": "Das richtige Licht für jeden Raum",
+        "intro": "<p>Die Lichtfarbe wird in Kelvin (K) angegeben: <strong>2700 K</strong> ist warmweiß und gemütlich – perfekt fürs Wohnzimmer. <strong>4000 K</strong> ist neutralweiß und fördert die Konzentration – ideal fürs Arbeitszimmer. Wähle eine Lichtfarbe und sieh dir die Wirkung an.</p>",
+        "show_scale": true,
+        "show_basics": true,
+        "show_calculator": true,
+        "calculator_heading": "Wie hell muss es sein?",
+        "button_label": "Leuchten entdecken",
+        "button_link": "/collections/all",
+        "color_scheme": "scheme-1",
+        "padding_top": 64,
+        "padding_bottom": 80
+      }
+    }
+  },
+  "order": ["advisor"]
+}

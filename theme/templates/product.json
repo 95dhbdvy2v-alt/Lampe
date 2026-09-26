@@ -1,0 +1,128 @@
+{
+  "sections": {
+    "main": {
+      "type": "main-product",
+      "blocks": {
+        "title": {
+          "type": "title",
+          "settings": {}
+        },
+        "price": {
+          "type": "price",
+          "settings": {}
+        },
+        "energy_label": {
+          "type": "custom_liquid",
+          "settings": {
+            "custom_liquid": "{% render 'lamp-energy-label', product: product %}"
+          }
+        },
+        "variant_picker": {
+          "type": "variant_picker",
+          "settings": {
+            "picker_type": "button"
+          }
+        },
+        "quantity_selector": {
+          "type": "quantity_selector",
+          "settings": {}
+        },
+        "buy_buttons": {
+          "type": "buy_buttons",
+          "settings": {
+            "show_dynamic_checkout": true
+          }
+        },
+        "tech_specs": {
+          "type": "custom_liquid",
+          "settings": {
+            "custom_liquid": "{% render 'lamp-tech-specs', product: product %}"
+          }
+        },
+        "description": {
+          "type": "description",
+          "settings": {}
+        },
+        "accordions": {
+          "type": "custom_liquid",
+          "settings": {
+            "custom_liquid": "{% render 'lamp-accordions', product: product %}"
+          }
+        }
+      },
+      "block_order": [
+        "title",
+        "price",
+        "energy_label",
+        "variant_picker",
+        "quantity_selector",
+        "buy_buttons",
+        "tech_specs",
+        "description",
+        "accordions"
+      ],
+      "settings": {
+        "enable_sticky_info": true,
+        "color_scheme": "scheme-1",
+        "media_size": "large",
+        "gallery_layout": "thumbnail_slider",
+        "media_position": "left",
+        "image_zoom": "lightbox",
+        "mobile_thumbnails": "hide",
+        "hide_variants": true,
+        "enable_video_looping": false,
+        "padding_top": 36,
+        "padding_bottom": 36
+      }
+    },
+    "related-products": {
+      "type": "related-products",
+      "settings": {
+        "heading": "Passt perfekt dazu",
+        "heading_size": "h2",
+        "products_to_show": 4,
+        "columns_desktop": 4,
+        "color_scheme": "scheme-2",
+        "image_ratio": "portrait",
+        "show_secondary_image": true,
+        "show_vendor": false,
+        "show_rating": false,
+        "columns_mobile": "2",
+        "padding_top": 48,
+        "padding_bottom": 48
+      }
+    },
+    "light_advisor": {
+      "type": "lx-light-advisor",
+      "blocks": {
+        "k2700": {
+          "type": "kelvin",
+          "settings": { "kelvin": 2700, "title": "Warmweiß", "mood": "Gemütlich und entspannend – wie klassisches Glühlampenlicht.", "rooms": "Wohnzimmer, Schlafzimmer, Esszimmer", "color": "#FFD29C" }
+        },
+        "k3000": {
+          "type": "kelvin",
+          "settings": { "kelvin": 3000, "title": "Warmweiß hell", "mood": "Freundlich und klar, bleibt aber wohnlich.", "rooms": "Küche, Bad, Flur", "color": "#FFE0B8" }
+        },
+        "k4000": {
+          "type": "kelvin",
+          "settings": { "kelvin": 4000, "title": "Neutralweiß", "mood": "Sachlich und aktivierend – fördert die Konzentration.", "rooms": "Arbeitszimmer, Küchenarbeitsfläche", "color": "#FFF1DC" }
+        }
+      },
+      "block_order": ["k2700", "k3000", "k4000"],
+      "settings": {
+        "eyebrow": "Unsicher bei der Lichtfarbe?",
+        "heading": "Kurz erklärt: Kelvin & Lichtwirkung",
+        "intro": "",
+        "show_scale": false,
+        "show_basics": true,
+        "show_calculator": false,
+        "calculator_heading": "Wie hell muss es sein?",
+        "button_label": "",
+        "color_scheme": "scheme-1",
+        "padding_top": 48,
+        "padding_bottom": 48
+      }
+    }
+  },
+  "order": ["main", "related-products", "light_advisor"]
+}
